@@ -4,6 +4,19 @@ var React = require('react'),
 
 var Session = require('../util/session.js');
 
+var ErrorBox = React.createClass({
+    render: function(){
+        if (this.state && this.state.failed){
+             return (
+                 <div className="registration-error">
+                    {this.state.errmsg}
+                 </div>
+             );
+        }
+        return(<div />);
+    }
+});
+
 var Register = React.createClass({
   apiUrl: "/api/user",
   handleChange: function(input, e, value) {
@@ -13,6 +26,7 @@ var Register = React.createClass({
   },
   handleSubmit: function(e) {
     e.preventDefault();
+    this.refs.submitbutton.setState({disabled: true});
     var registration_resp = Session.register(
         this.state.username,
         this.state.password,
@@ -24,15 +38,12 @@ var Register = React.createClass({
     if(registration_resp.Success){
       document.location.href="/#/";
     } else {
-      if (!this.state.failed) {
-        this.state.failed = true;
-        $('#register-form').append(
-            <div className="registration-error">
-                {registration_resp.Error}
-            </div>
-        );
-      }
+        this.refs.errorbox.setState({
+            failed: true,
+            errmsg: registration_resp.Error,
+        });
     }
+    this.refs.submitbutton.setState({disabled: false});
   },
   render: function() {
     if (Session.is_logged_in()) {
@@ -61,7 +72,8 @@ var Register = React.createClass({
             <mui.Input type="text"
                  onChange={this.handleChange.bind(this, "classyear")}
                  placeholder="Class Year" name="classyear" />
-            <mui.RaisedButton primary={true} label="submit"/>
+            <ErrorBox ref="errorbox" />
+            <mui.RaisedButton ref="submitbutton" primary={true} label="submit"/>
           </form>
         </div>
       );
