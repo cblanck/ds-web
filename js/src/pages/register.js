@@ -54,24 +54,44 @@ var Register = React.createClass({
         <div className="register-div">
           <h1>Sign Up!</h1>
           <form id="register-form" className="register-form" onSubmit={this.handleSubmit}>
-            <mui.Input type="text"
-                 onChange={this.handleChange.bind(this, "username")}
-                 placeholder="Username" name="username" />
-            <mui.Input type="password"
-                 onChange={this.handleChange.bind(this, "password")}
-                 placeholder="Password" name="password" />
-            <mui.Input type="text"
-                 onChange={this.handleChange.bind(this, "email")}
-                 placeholder="Email Address" name="email" />
-            <mui.Input type="text"
-                 onChange={this.handleChange.bind(this, "firstname")}
-                 placeholder="First Name" name="firstname" />
-            <mui.Input type="text"
-                 onChange={this.handleChange.bind(this, "lastname")}
-                 placeholder="Last Name" name="lastname" />
-            <mui.Input type="text"
-                 onChange={this.handleChange.bind(this, "classyear")}
-                 placeholder="Class Year" name="classyear" />
+          <table border='0'>
+          <tr>
+            <td>
+                <mui.Input type="text"
+                     onChange={this.handleChange.bind(this, "username")}
+                     placeholder="Username" name="username" />
+            </td>
+            <td>
+                <mui.Input type="password"
+                     onChange={this.handleChange.bind(this, "password")}
+                     placeholder="Password" name="password" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <mui.Input type="text"
+                     onChange={this.handleChange.bind(this, "firstname")}
+                     placeholder="First Name" name="firstname" />
+            </td>
+            <td>
+                <mui.Input type="text"
+                     onChange={this.handleChange.bind(this, "lastname")}
+                     placeholder="Last Name" name="lastname" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <mui.Input type="text"
+                     onChange={this.handleChange.bind(this, "email")}
+                     placeholder="Email Address" name="email" />
+            </td>
+            <td>
+                <mui.Input type="text"
+                     onChange={this.handleChange.bind(this, "classyear")}
+                     placeholder="Class Year" name="classyear" />
+            </td>
+        </tr>
+        </table>
             <ErrorBox ref="errorbox" />
             <mui.RaisedButton ref="submitbutton" primary={true} label="submit"/>
           </form>
