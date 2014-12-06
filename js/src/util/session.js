@@ -1,19 +1,19 @@
 $ = require('jquery');
 require('jquery.cookie');
 
-var Session = {}
+var Session = {};
 
-Session.is_logged_in = function() {                   
-  var session = $.cookie('session');            
-  if (session === undefined) {                  
-    return false;                             
-  }                                             
-  return session_valid(session);                
-};                                                
-                       
+Session.is_logged_in = function() {
+  var session = $.cookie('session');
+  if (session === undefined) {
+    return false;
+  }
+  return session_valid(session);
+};
+
 Session.logout = function() {
-  $.removeCookie('session'); 
-}
+  $.removeCookie('session');
+};
 
 Session.login = function(username, password) {
   var response = $.ajax({
@@ -29,25 +29,59 @@ Session.login = function(username, password) {
   }).responseText;
   var data = JSON.parse(response);
   if(data.Success){
-    $.cookie('session', data.Return.Session_token);
+    session_store(data.Return);
     return true;
   } else {
     return false;
-  } 
-}
+  }
+};
 
-var session_valid = function(session) {           
-    var validation_resp = $.ajax({                
-        type: 'POST',                             
-        url: '/api/user',                         
-        data: {                                   
-            method: 'validate',                   
-            session: session                      
-        },                                        
-        async: false                              
-    }).responseText;                              
-    var validation = JSON.parse(validation_resp); 
-    return validation.Success;                    
-};                                                
+Session.register = function(username, password, email, firstname, lastname, classyear) {
+  var response = $.ajax({
+    url: '/api/user',
+    method: 'POST',
+    data: {
+      method: 'register',
+      user: username,
+      pass: password,
+      email: email,
+      firstname: firstname,
+      lastname: lastname,
+      classyear: classyear,
+    },
+    dataType: 'json',
+    async: false
+  }).responseText;
+  var data = JSON.parse(response);
+  if(data.Success){
+    session_store(data.Return);
+    return data;
+  } else {
+    return data;
+  }
+};
+
+var session_store = function(json_session){
+    $.cookie('username', json_session.Username);
+    $.cookie('email', json_session.Email);
+    $.cookie('firstname', json_session.First_name);
+    $.cookie('lastname', json_session.Last_name);
+    $.cookie('classyear', json_session.Class_year);
+    $.cookie('session', json_session.Session_token);
+};
+
+var session_valid = function(session) {
+    var validation_resp = $.ajax({
+        type: 'POST',
+        url: '/api/user',
+        data: {
+            method: 'validate',
+            session: session
+        },
+        async: false
+    }).responseText;
+    var validation = JSON.parse(validation_resp);
+    return validation.Success;
+};
 
 module.exports = Session;

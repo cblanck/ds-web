@@ -13,13 +13,24 @@ var Register = React.createClass({
   },
   handleSubmit: function(e) {
     e.preventDefault();
-    var login_res = Session.login(this.state.username, this.state.password);
-    if(login_res){
+    var registration_resp = Session.register(
+        this.state.username,
+        this.state.password,
+        this.state.email,
+        this.state.firstname,
+        this.state.lastname,
+        this.state.classyear
+    );
+    if(registration_resp.Success){
       document.location.href="/#/";
     } else {
       if (!this.state.failed) {
         this.state.failed = true;
-        $('#login-form').append("<p>Incorrect username or password</p>");
+        $('#register-form').append(
+            <div className="registration-error">
+                {registration_resp.Error}
+            </div>
+        );
       }
     }
   },
