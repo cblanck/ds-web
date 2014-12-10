@@ -24,13 +24,17 @@ module.exports = React.createClass({
         <mui.Toolbar>
           <mui.ToolbarGroup key={0} float="left">
             <mui.FlatButton
-              onClick={function(){document.location.href="/#/"}}
-              label="Home"/>
+              onClick = {function(){document.location.href = "/#/"}}
+              label = "Home"/>
             <mui.FlatButton
-              onClick={function(){document.location.href="/#/sheets"}}
-              label="Degree Sheets"/>
+              onClick = {function(){document.location.href = "/#/sheets"}}
+              label = "Degree Sheets"/>
           </mui.ToolbarGroup>
+
           <mui.ToolbarGroup key={1} float="right">
+            <mui.FlatButton
+              onClick = {function() {document.location.href = "/#/register"}}
+              label = "Register"/>
             <mui.FlatButton
               onClick={onClick}
               label={label} />
