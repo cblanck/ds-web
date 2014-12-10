@@ -6,6 +6,7 @@ var Session = require('../util/session.js');
 
 var Login = React.createClass({
   loginUrl: "/api/user",
+  forgot: false,
   handleChange: function(input, e, value) {
     var nextState = {};
     nextState[input] = value;
@@ -24,23 +25,17 @@ var Login = React.createClass({
     }
   },
   handleForgot: function(e) {
-    e.preventDefault();
-    if (!this.state.forgot) {
-      this.state.forgot = true;
-      $('#login-form').append(
-        <form id="forgot-form" className="forgot-form" onSubmit={this.handleForgotSubmit}>
-        <mui.Input type="text"
-             onChange={this.handleChange.bind(this, "forgot_user")}
-             placeholder="Username" name="forgot_user" />
-        <mui.RaisedButton label="submit"/>
-        </form>
-      );
+    console.log("lel");
+    console.log(this);
+    if (!this.forgot) {
+      this.forgot = true;
+      $('#forgot-form').show();
     }
   },
   handleForgotSubmit: function(e) {
     e.preventDefault();
     $.ajax({
-      url: '/api/user',
+      url: this.loginUrl,
       method: 'POST',
       data: {
         method: 'forgot_password',
@@ -67,8 +62,15 @@ var Login = React.createClass({
                  placeholder="Password" name="password" />
             <mui.RaisedButton primary={true} label="submit"/>
           </form>
+          <mui.RaisedButton label="Forgot password" onClick={this.handleForgot}/>
+          <form id="forgot-form" className="forgot-form"
+                onSubmit={this.handleForgotSubmit}>
+          <mui.Input type="text"
+               onChange={this.handleChange.bind(this, "forgot_user")}
+               placeholder="Username" name="forgot_user" />
+          <mui.RaisedButton label="submit"/>
+          </form>
         </div>
-        <mui.RaisedButton label="Forgot password" onClick={this.handleForgot}>
       );
     }
   }
