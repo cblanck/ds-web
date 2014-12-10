@@ -7,6 +7,7 @@ var Session = require('../util/session.js');
 var Login = React.createClass({
   loginUrl: "/api/user",
   forgot: false,
+  forgotSubmit: false,
   handleChange: function(input, e, value) {
     var nextState = {};
     nextState[input] = value;
@@ -29,7 +30,7 @@ var Login = React.createClass({
     console.log(this);
     if (!this.forgot) {
       this.forgot = true;
-      $('#forgot-form').show();
+      $('#forgot-form').slideDown();
     }
   },
   handleForgotSubmit: function(e) {
@@ -43,7 +44,10 @@ var Login = React.createClass({
       },
       dataType: 'json',
     });
-    $('#forgot-form').append("<p>Password reset has been emailed to you</p>");
+    if (!this.forgotSubmit){
+      this.forgotSubmit = true;
+      $('#forgot-form').append("<p>Password reset has been emailed to you</p>");
+    }
   },
   render: function() {
     if (Session.is_logged_in()) {
@@ -60,9 +64,11 @@ var Login = React.createClass({
             <mui.Input type="password"
                  onChange={this.handleChange.bind(this, "password")}
                  placeholder="Password" name="password" />
-            <mui.RaisedButton primary={true} label="submit"/>
+            <mui.RaisedButton id="login-button"
+                 primary={true} label="submit"/>
+            <mui.RaisedButton id="forgot-button" type="button"
+               label="Forgot password" onClick={this.handleForgot}/>
           </form>
-          <mui.RaisedButton label="Forgot password" onClick={this.handleForgot}/>
           <form id="forgot-form" className="forgot-form"
                 onSubmit={this.handleForgotSubmit}>
           <mui.Input type="text"
