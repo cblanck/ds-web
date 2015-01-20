@@ -12,7 +12,29 @@ Session.is_logged_in = function() {
 };
 
 Session.logout = function() {
-  $.removeCookie('session');
+  $.removeCookie('session'); 
+};
+
+Session.reset = function(username, key, password) {
+  var response = $.ajax({
+    url: '/api/user',
+    method: 'POST',
+    data: {
+      method: 'reset_password',
+      user: username,
+      reset_key: key,
+      new_pass: password,
+    },
+    dataType: 'json',
+    async: false
+  }).responseText;
+  var data = JSON.parse(response);
+  if(data.Success){
+    session_store(data.Return);
+    return true;
+  } else {
+    return false;
+  }
 };
 
 Session.login = function(username, password) {
