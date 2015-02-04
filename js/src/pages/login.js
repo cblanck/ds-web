@@ -5,11 +5,16 @@ var React = require('react'),
 var Session = require('../util/session.js');
 
 var Login = React.createClass({
-  loginUrl: "/api/user",
   forgot: false,
   forgotSubmit: false,
+  getInitialState: function() {
+    return {
+      username: "",
+      password: "",
+    };
+  },
   handleChange: function(input, e, value) {
-    var nextState = {};
+    var nextState = this.state;
     nextState[input] = value;
     this.setState(nextState);
   },
