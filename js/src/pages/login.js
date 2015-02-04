@@ -7,6 +7,7 @@ var Session = require('../util/session.js');
 var Login = React.createClass({
   forgot: false,
   forgotSubmit: false,
+  loginUrl: "/api/user",
   getInitialState: function() {
     return {
       username: "",
@@ -31,8 +32,6 @@ var Login = React.createClass({
     }
   },
   handleForgot: function(e) {
-    console.log("lel");
-    console.log(this);
     if (!this.forgot) {
       this.forgot = true;
       $('#forgot-form').slideDown();
