@@ -2,12 +2,13 @@
 
 var React = require('react'),
     ReactRouter = require('react-router');
-    mui = require('material-ui');
+    mui = require('material-ui'),
+    Navigation = require('react-router').Navigation;
 
 var Session = require('../util/session.js');
 
-module.exports = React.createClass({
-
+var App = React.createClass({
+  mixins: [Navigation],
   render: function() {
     var onClick, label, registerButtonVisible;
 
@@ -19,7 +20,7 @@ module.exports = React.createClass({
       };
       label="Logout";
     } else {
-      onClick=function(){document.location.href="/#/login"};
+      onClick=function(){this.transitionTo('Login');}.bind(this);
       label="Login";
       registerButtonVisible = true;
     }
@@ -30,21 +31,21 @@ module.exports = React.createClass({
           <mui.ToolbarGroup key={0} float="left">
             {/*Home Button*/}
             <mui.FlatButton
-              onClick = {function(){document.location.href = "/#/"}}
+              linkButton={true} href="/#/"
               label = "Home"/>
             {/*Sheets Button*/}
             <mui.FlatButton
-              onClick = {function(){document.location.href = "/#/sheets"}}
+              linkButton={true} href="/#/sheets"
               label = "Degree Sheets"/>
           </mui.ToolbarGroup>
 
           <mui.ToolbarGroup key={1} float="right">
             {/*Register Button*/}
             <mui.FlatButton
-            onClick = {function() {document.location.href = "/#/register"}}
+            linkButton={true} href = "/#/register"
             label = "Register"
             style={registerButtonVisible ? {} : {display: 'none'}}/>
-            {/*Login Button*/}
+            {/*Login/Logout Button*/}
             <mui.FlatButton
               onClick={onClick}
               label={label} />
@@ -56,3 +57,5 @@ module.exports = React.createClass({
     );
   }
 });
+
+module.exports = App;

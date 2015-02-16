@@ -6,27 +6,22 @@ var React = require('react'),
 var Session = require('../util/session.js');
 
 var ResetPassword = React.createClass({
-  mixins: [ReactRouter.State],
+  mixins: [ReactRouter.State, React.addons.LinkedStateMixin],
   getInitialState: function() {
     return {
       password: "",
       password2: "",
+      buttonDisabled: true,
+      errorText: "",
     };
   },
-  handleChange: function(input, e, value) {
-    var nextState = this.state;
-    nextState[input] = value;
-    this.setState(nextState);
+  handleErrorInputChange: function(input, value) {
     if (this.state.password != this.state.password2) {
-      $('#reset-button').prop("disabled", true);
-      if(!$("#reset-button").hasClass("mui-is-disabled")){
-        $('#reset-button').addClass("mui-is-disabled");
-      }
+      this.setState({buttonDisabled: true,
+                     errorText: "Passwords must match"});
     } else {
-      $('#reset-button').prop("disabled", false);
-      if($("#reset-button").hasClass("mui-is-disabled")){
-        $('#reset-button').removeClass("mui-is-disabled");
-      }
+      this.setState({buttonDisabled: false,
+                     errorText: ""});
     }
   },
   handleSubmit: function(e) {
@@ -48,13 +43,17 @@ var ResetPassword = React.createClass({
       <h1>Reset Password</h1>
       <form id="reset-form" className="reset-password"
           onSubmit={this.handleSubmit}>
-        <mui.Input type="password"
-             onChange={this.handleChange.bind(this, "password")}
-             placeholder="Password" name="password" />
-        <mui.Input type="password"
-             onChange={this.handleChange.bind(this, "password2")}
-             placeholder="Repeat password" name="password2" />
-        <mui.RaisedButton disabled id="reset-button" primary={true} label="submit"/>
+        <mui.TextField type="password"
+             valueLink={this.linkState('password')}
+             onChange={this.handleErrorInputChange}
+             hintText="Password"/>
+        <mui.TextField type="password"
+             valueLink={this.linkState('password2')}
+             onChange={this.handleErrorInputChange}
+             hintText="Repeat password"/>
+             errorText={this.state.errorText}
+        <mui.RaisedButton disabled={this.state.buttonDisabled}
+                          id="reset-button" primary={true} label="submit"/>
       </form>
     </div>
   );

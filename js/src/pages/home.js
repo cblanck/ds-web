@@ -2,10 +2,12 @@
 
 var React = require('react');
 
-module.exports = React.createClass({
+var Home = React.createClass({
     render: function() {
         return (
             <p>This is the root page</p>
         );
     }
 });
+
+module.exports = Home;
