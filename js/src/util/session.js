@@ -13,8 +13,11 @@ Session.is_logged_in = function() {
 };
 
 Session.logout = function() {
-  $.removeCookie('session');
+  $.removeCookie('session'); 
 };
+Session.get_session = function() {
+  return $.cookie('session');
+}
 
 Session.forgot_password = function(user) {
   $.ajax({
