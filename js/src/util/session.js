@@ -2,6 +2,7 @@ $ = require('jquery');
 require('jquery.cookie');
 
 var Session = {};
+var user_api = '/api/user'
 
 Session.is_logged_in = function() {
   var session = $.cookie('session');
@@ -12,12 +13,24 @@ Session.is_logged_in = function() {
 };
 
 Session.logout = function() {
-  $.removeCookie('session'); 
+  $.removeCookie('session');
 };
+
+Session.forgot_password = function(user) {
+  $.ajax({
+    url: user_api,
+    method: 'POST',
+    data: {
+      method: 'forgot_password',
+      user: user,
+    },
+    dataType: 'json',
+  });
+}
 
 Session.reset = function(username, key, password) {
   var response = $.ajax({
-    url: '/api/user',
+    url: user_api,
     method: 'POST',
     data: {
       method: 'reset_password',
@@ -39,7 +52,7 @@ Session.reset = function(username, key, password) {
 
 Session.login = function(username, password) {
   var response = $.ajax({
-    url: '/api/user',
+    url: user_api,
     method: 'POST',
     data: {
       method: 'login',
@@ -60,7 +73,7 @@ Session.login = function(username, password) {
 
 Session.register = function(username, password, email, firstname, lastname, classyear) {
   var response = $.ajax({
-    url: '/api/user',
+    url: user_api,
     method: 'POST',
     data: {
       method: 'register',
@@ -95,7 +108,7 @@ var session_store = function(json_session){
 var session_valid = function(session) {
     var validation_resp = $.ajax({
         type: 'POST',
-        url: '/api/user',
+        url: user_api,
         data: {
             method: 'validate',
             session: session

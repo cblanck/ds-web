@@ -1,10 +1,12 @@
 var React = require('react'),
     mui   = require('material-ui'),
     $     = require('jquery');
+    Navigation = require('react-router').Navigation;
 
 var Session = require('../util/session.js');
 
 var Login = React.createClass({
+  mixins: [React.addons.LinkedStateMixin, Navigation],
   forgot: false,
   forgotSubmit: false,
   loginUrl: "/api/user",
@@ -14,16 +16,11 @@ var Login = React.createClass({
       password: "",
     };
   },
-  handleChange: function(input, e, value) {
-    var nextState = this.state;
-    nextState[input] = value;
-    this.setState(nextState);
-  },
   handleSubmit: function(e) {
     e.preventDefault();
     var login_res = Session.login(this.state.username, this.state.password);
     if(login_res){
-      document.location.href="/#/";
+      this.transitionTo('Home');
     } else {
       if (!this.state.failed) {
         this.state.failed = true;
@@ -39,15 +36,7 @@ var Login = React.createClass({
   },
   handleForgotSubmit: function(e) {
     e.preventDefault();
-    $.ajax({
-      url: this.loginUrl,
-      method: 'POST',
-      data: {
-        method: 'forgot_password',
-        user: this.state.forgot_user,
-      },
-      dataType: 'json',
-    });
+    Session.forgot_password();
     if (!this.forgotSubmit){
       this.forgotSubmit = true;
       $('#forgot-form').append("<p>Password reset has been emailed to you</p>");
@@ -55,19 +44,19 @@ var Login = React.createClass({
   },
   render: function() {
     if (Session.is_logged_in()) {
-      document.location.href="/#/";
+      this.transitionTo('Home');
       return (<div></div>);
     } else {
       return (
         <div className="login-div">
           <h1>Login</h1>
           <form id="login-form" className="login-form" onSubmit={this.handleSubmit}>
-            <mui.Input type="text"
-                 onChange={this.handleChange.bind(this, "username")}
-                 placeholder="Username" name="username" />
-            <mui.Input type="password"
-                 onChange={this.handleChange.bind(this, "password")}
-                 placeholder="Password" name="password" />
+            <mui.TextField
+                 valueLink={this.linkState('username')}
+                 hintText="Username"/>
+            <mui.TextField type="password"
+                 valueLink={this.linkState('password')}
+                 hintText="Password"/>
             <mui.RaisedButton id="login-button"
                  primary={true} label="submit"/>
             <mui.RaisedButton id="forgot-button" type="button"
@@ -75,9 +64,9 @@ var Login = React.createClass({
           </form>
           <form id="forgot-form" className="forgot-form"
                 onSubmit={this.handleForgotSubmit}>
-          <mui.Input type="text"
-               onChange={this.handleChange.bind(this, "forgot_user")}
-               placeholder="Username" name="forgot_user" />
+          <mui.TextField
+               valueLink={this.linkState('forgot_user')}
+               hintText="Username"/>
           <mui.RaisedButton label="submit"/>
           </form>
         </div>

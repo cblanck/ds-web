@@ -18,11 +18,16 @@ var ErrorBox = React.createClass({
 });
 
 var Register = React.createClass({
-  apiUrl: "/api/user",
-  handleChange: function(input, e, value) {
-    var nextState = {};
-    nextState[input] = value;
-    this.setState(nextState);
+  mixins: [React.addons.LinkedStateMixin],
+  getInitialState: function() {
+    return {
+      username: "",
+      password: "",
+      email: "",
+      firstname: "",
+      lastname: "",
+      classyear: "",
+    }
   },
   handleSubmit: function(e) {
     e.preventDefault();
@@ -57,38 +62,38 @@ var Register = React.createClass({
           <table border='0'>
           <tr>
             <td>
-                <mui.Input type="text"
-                     onChange={this.handleChange.bind(this, "username")}
-                     placeholder="Username" name="username" />
+                <mui.TextField
+                     valueLink={this.linkState('username')}
+                     hintText="Username"/>
             </td>
             <td>
-                <mui.Input type="password"
-                     onChange={this.handleChange.bind(this, "password")}
-                     placeholder="Password" name="password" />
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <mui.Input type="text"
-                     onChange={this.handleChange.bind(this, "firstname")}
-                     placeholder="First Name" name="firstname" />
-            </td>
-            <td>
-                <mui.Input type="text"
-                     onChange={this.handleChange.bind(this, "lastname")}
-                     placeholder="Last Name" name="lastname" />
+                <mui.TextField type="password"
+                     valueLink={this.linkState('password')}
+                     hintText="Password"/>
             </td>
         </tr>
         <tr>
             <td>
-                <mui.Input type="text"
-                     onChange={this.handleChange.bind(this, "email")}
-                     placeholder="Email Address" name="email" />
+                <mui.TextField
+                     valueLink={this.linkState('firstname')}
+                     hintText="First Name"/>
             </td>
             <td>
-                <mui.Input type="text"
-                     onChange={this.handleChange.bind(this, "classyear")}
-                     placeholder="Class Year" name="classyear" />
+                <mui.TextField
+                     valueLink={this.linkState('lastname')}
+                     hintText="Last Name"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <mui.TextField
+                     valueLink={this.linkState('email')}
+                     hintText="Email Address"/>
+            </td>
+            <td>
+                <mui.TextField
+                     valueLink={this.linkState('classyear')}
+                     hintText="Class Year"/>
             </td>
         </tr>
         </table>
