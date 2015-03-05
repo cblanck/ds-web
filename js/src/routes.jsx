@@ -8,7 +8,8 @@ var React = require('react'),
     Home = require('./pages/home.js'),
     ResetPassword = require('./pages/reset_password.js'),
     Login = require('./pages/login.js'),
-    Register = require('./pages/register.js');
+    Register = require('./pages/register.js'),
+    ReviewForm = require('./components/review_form.js');
 
 module.exports = (
     <ReactRouter.Route handler={App}>
