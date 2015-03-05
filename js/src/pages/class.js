@@ -12,8 +12,25 @@ module.exports = React.createClass({
     render: function() {
         var uri_params = this.getParams();
         var class_data = ClassAPI.getById(uri_params.classId);
+        var classInfoItems = [
+            { text: 'Name', data: class_data.Name },
+            { text: 'Subject', data: class_data.Subject_description },
+            { text: 'Callsign', data: class_data.Subject_callsign + "-" + class_data.Course_number },
+            { text: 'Instructors', data: (<ul>{class_data.Instructors.map(function(instructor, i){
+                return (<li><a href="mailto:{instructor.Email}">{instructor.Name}</a></li>);
+                })}</ul>), },
+        ];
         return (
-                <p>{class_data}</p>
+                <div className='class_continer'>
+                    <div className='class_info'>
+                        <mui.Menu className='class_quickref' menuItems={classInfoItems} />
+                        <mui.Paper className='class_detail'>
+                           <strong>{class_data.Name}</strong><br/>
+                           {class_data.Description}<br/>
+                            List of sections?
+                        </mui.Paper>
+                    </div>
+                </div>
                );
     }
 });
