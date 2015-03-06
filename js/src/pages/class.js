@@ -4,6 +4,7 @@ var React = require('react'),
     ReactRouter = require('react-router'),
     mui   = require('material-ui'),
     ClassAPI = require('../util/class.js'),
+    ReviewForm = require('../components/review_form.js'),
     $     = require('jquery');
 
 
@@ -27,7 +28,11 @@ module.exports = React.createClass({
                         <mui.Paper className='class_detail'>
                            <strong>{class_data.Name}</strong><br/>
                            {class_data.Description}<br/>
-                            List of sections?
+                            List of sections?<br/>
+                        <ReviewForm
+                          classId={uri_params.classId}
+                          instructors={class_data.Instructors}
+                        />
                         </mui.Paper>
                     </div>
                 </div>

@@ -6,15 +6,17 @@ module.exports = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
   getInitialState: function() {
     var classId = this.props.classId;
-    var instructorId = this.props.instructorId;
     return {
       review: "",
       title: "",
       recommend: 0,
       errorMessage: null,
       classId: classId,
-      instructorId: instructorId,
+      instructorId: this.props.instructors[0].Id,
     };
+  },
+  dropDownChange: function(e, idx, item) {
+    this.setState({instructorId: item.payload});
   },
   handleSubmit: function(e) {
     e.preventDefault();
@@ -31,16 +33,26 @@ module.exports = React.createClass({
     }
   },
   render: function() {
+    var menuItems = this.props.instructors.map(
+        function(i) {
+          return {
+            payload: i.Id,
+            text: i.Name,
+          };
+        });
     return (
       <div className="submit-review-div">
-        <h2>Submit a review</h2>
+        <strong>Submit a review</strong>
         <form id="submit-review-form" className="submit-review-form" onSubmit={this.handleSubmit}>
+          <mui.DropDownMenu
+            menuItems={menuItems}
+            onChange={this.dropDownChange}/><br/>
           <mui.TextField
             valueLink={this.linkState('title')}
-            hintText="Review Title"/>
+            hintText="Review Title"/><br/>
           <mui.TextField
             valueLink={this.linkState('review')}
-            hintText="Review" multiLine={true} />
+            hintText="Review" multiLine={true} /><br/>
           <mui.Checkbox
             name="recommend"
             label="Recommend this class?"
