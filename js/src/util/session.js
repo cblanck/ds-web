@@ -19,12 +19,48 @@ Session.logout = function() {
 Session.get_session = function() {
   return {
     username: $.cookie('username'),
-    email: $.cookie('email')
+    email: $.cookie('email'),
     firstname: $.cookie('firstname'),
     lastname: $.cookie('lastname'),
     classyear: $.cookie('classyear'),
     session: $.cookie('session'),
   };
+}
+
+Session.modify_user = function(user_state) {
+  var response = $.ajax({
+    url: user_api,
+    method: 'POST',
+    data: {
+      method: 'modify',
+      session: $.cookie('session'),
+      pass: user_state.password,
+      email: user_state.email,
+      firstname: user_state.firstname,
+      lastname: user_state.lastname,
+      classyear: user_state.classyear,
+    },
+    dataType: 'json',
+    async: false,
+  }).responseText;
+  var data = JSON.parse(response);
+  if (data.Success){
+    if (user_state.email) {
+      $.cookie('email', user_state.email);
+    }
+    if (user_state.firstname) {
+      $.cookie('firstname', user_state.firstname);
+    }
+    if (user_state.lastname) {
+      $.cookie('lastname', user_state.lastname);
+    }
+    if (user_state.classyear) {
+      $.cookie('classyear', user_state.classyear);
+    }
+    return true;
+  } else {
+    return false;
+  }
 }
 
 Session.forgot_password = function(user) {

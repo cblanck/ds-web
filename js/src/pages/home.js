@@ -16,10 +16,15 @@ var Home = React.createClass({
       lastname: session.lastname,
       classyear: session.classyear,
       password: '',
+      errortext: '',
     };
   },
   handleSubmit: function(e) {
     e.preventDefault();
+    var modify_res = Session.modify_user(this.state);
+    if (!modify_res){
+      this.setState({errortext: 'Modify failed'});
+    }
   },
   render: function() {
     if(Session.is_logged_in()){
@@ -31,6 +36,9 @@ var Home = React.createClass({
                  valueLink={this.linkState('email')}
                  hintText="Email address"/>
             <mui.TextField
+                 valueLink={this.linkState('password')}
+                 hintText="Password"/>
+            <mui.TextField
                  valueLink={this.linkState('firstname')}
                  hintText="First Name"/>
             <mui.TextField
@@ -41,6 +49,7 @@ var Home = React.createClass({
                  hintText="Class Year"/>
             <mui.RaisedButton primary={true} label="submit"/>
           </form>
+          {this.state.errortext && <p>{this.state.errortext}</p>}
         </mui.Paper>
       );
     } else {
