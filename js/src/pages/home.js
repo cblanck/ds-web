@@ -55,7 +55,7 @@ var Home = React.createClass({
     } else {
       return (
         <div className="home-div">
-          <h1>Join the flock</h1>
+          <h1 className="flock-text">Join the flock</h1>
           <img className="flock-image" src="../../../static/ttronslien-9405.jpg"/>
         </div>
       );
