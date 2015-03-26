@@ -14,6 +14,7 @@ var Login = React.createClass({
     return {
       username: "",
       password: "",
+      forgot_user: "",
     };
   },
   handleSubmit: function(e) {
@@ -36,7 +37,7 @@ var Login = React.createClass({
   },
   handleForgotSubmit: function(e) {
     e.preventDefault();
-    Session.forgot_password();
+    Session.forgot_password(this.state.forgot_user);
     if (!this.forgotSubmit){
       this.forgotSubmit = true;
       $('#forgot-form').append("<p>Password reset has been emailed to you</p>");
