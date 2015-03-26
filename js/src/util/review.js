@@ -10,7 +10,7 @@ Review.post = function(review_form) {
     method: 'POST',
     data: {
       method: 'post_review',
-      session: Session.get_session(),
+      session: Session.get_session().session,
       review: review_form.review,
       title: review_form.title,
       instructor_id: review_form.instructorId,
