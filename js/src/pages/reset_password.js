@@ -50,8 +50,8 @@ var ResetPassword = React.createClass({
         <mui.TextField type="password"
              valueLink={this.linkState('password2')}
              onChange={this.handleErrorInputChange}
-             hintText="Repeat password"/>
-             errorText={this.state.errorText}
+             hintText="Repeat password"
+             errorText={this.state.errorText}/>
         <mui.RaisedButton disabled={this.state.buttonDisabled}
                           id="reset-button" primary={true} label="submit"/>
       </form>
