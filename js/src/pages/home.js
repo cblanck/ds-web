@@ -2,6 +2,7 @@
 
 var Session = require('../util/session.js'),
     mui = require('material-ui'),
+    Link = require('react-router').Link,
     React = require('react');
 
 
@@ -55,7 +56,7 @@ var Home = React.createClass({
     } else {
       return (
         <div className="home-div">
-          <h1 className="flock-text">Join the flock</h1>
+          <Link to="Register" className="flock-text">Join the flock</Link>
           <img className="flock-image" src="../../../static/ttronslien-9405.jpg"/>
         </div>
       );
