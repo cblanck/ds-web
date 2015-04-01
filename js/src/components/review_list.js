@@ -24,8 +24,7 @@ var ReviewList = React.createClass({
     },
 
     render: function() {
-        var uri_params = this.getParams();
-        var reviews = this.getReviewsForClass(uri_params.classId);
+        var reviews = this.getReviewsForClass(this.props.classId);
         //TODO - if no reviews, say so!
         console.log(reviews);
 
