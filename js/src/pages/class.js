@@ -27,16 +27,16 @@ module.exports = React.createClass({
                     <div className='class_info'>
                         <mui.Menu className='class_quickref' menuItems={classInfoItems} />
                         <mui.Paper className='class_detail'>
-                           <strong>{class_data.Name}</strong><br/>
-                           {class_data.Description}<br/>
-                            List of sections?<br/>
-                        <ReviewForm
-                          classId={uri_params.classId}
-                          instructors={class_data.Instructors}
-                        />
-                        <ReviewList
-                          classId={uri_params.classId}
-                        />
+                           <div className='class_detail_inner'>
+                               <strong>{class_data.Name}</strong><br/>
+                               {class_data.Description}<br/>
+                                List of sections?<br/>
+                                <ReviewForm
+                                  classId={uri_params.classId}
+                                  instructors={class_data.Instructors} />
+                                <ReviewList
+                                  classId={uri_params.classId} />
+                           </div>
                         </mui.Paper>
                     </div>
                 </div>
