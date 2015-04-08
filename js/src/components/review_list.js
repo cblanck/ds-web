@@ -23,7 +23,6 @@ var Review = React.createClass({
 });
 
 var ReviewList = React.createClass({
-    //  mixins: [ReactRouter.State],
 
     getReviewsForClass: function(classID) {
         var response = $.ajax({
@@ -44,7 +43,6 @@ var ReviewList = React.createClass({
     render: function() {
         var reviews = this.getReviewsForClass(this.props.classId);
         //TODO - if no reviews, say so!
-        console.log(reviews);
 
         return (
                 <div className="review-list-component">
