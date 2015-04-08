@@ -3,7 +3,8 @@ var React = require('react'),
     dnd   = require('react-dnd'),
     Navigation = require('react-router').Navigation;
 
-var Session = require('../util/session.js');
+var Session = require('../util/session.js'),
+    Sheet = require('../util/sheet.js');
 var dropTarget = {
   acceptDrop: function(component, course) {
     component.setState({
@@ -12,8 +13,8 @@ var dropTarget = {
   }
 };
 
-function makeReqBin(accepts) {
-  var RequirementBin = React.createClass({
+function makeCategoryBin(category) {
+  var CategoryBin = React.createClass({
     mixins: [dnd.DragDropMixin],
     getInitialState: function() {
       return {
@@ -22,45 +23,71 @@ function makeReqBin(accepts) {
     },
     statics: {
       configureDragDrop: function(register) {
-        accepts.forEach(function(itemType) {
-          return register(itemType, { dropTarget: dropTarget });
-        });
+        if (category.Classes) {
+          category.Classes.forEach(
+            function(e,i,a) {
+              register(e.Id.toString(), {dropTarget: dropTarget});
+            }
+          );
+        } else {
+          register(category.Id.toString(), {dropTarget: dropTarget});
+        }
+      }
+    },
+    handleClick: function() {
+      if (this.state.droppedCourse) {
+        this.state.droppedCourse.setState({hasDropped: false});
+        this.setState({droppedCourse: null});
       }
     },
     render: function() {
-      var item = this.state.course;
-      var backgroundColor = '#222';
-      var dropStates = accepts.map(this.getDropState);
+      if (category.Classes) {
+        var courses = category.Classes.map(
+          function(e) {
+            return e.Id.toString();
+          }
+        );
+      } else {
+        courses = [category.Id.toString()];
+      }
+      var backgroundColor = '#FFF59D';
+      var dropStates = courses.map(this.getDropState);
+      var filled = this.state.droppedCourse;
+      var slotInfo = category.Name;
+      var callsign = "";
+      if (!category.Classes) {
+        callsign = (' ('+category.Subject_callsign + " " +
+                     category.Course_number+')');
+      }
+      if (filled){
+        slotInfo += (" fulfilled by " + filled.props.name + " (remove)");
+        backgroundColor = '#A5D6A7';
+      }
 
-      if (dropStates.some(function(e,i,a){return e.isHovering;})) {
+      if (dropStates.some(function(e,i,a){ return e.isHovering; })) {
         backgroundColor = 'darkgreen';
-      } else if (dropStates.some(function(e,i,a){return e.isDragging})) {
+      } else if (dropStates.some(function(e,i,a){ return e.isDragging; })) {
         backgroundColor = 'darkkhaki';
       }
       return (
-        <div {...this.dropTargetFor.apply(this, accepts)}
+        <div className="category-div" {...this.dropTargetFor.apply(this, courses)} onClick={this.handleClick}
           style={{backgroundColor: backgroundColor}}>
-          {dropStates.some(function(e,i,a) {return e.isHovering}) ?
+          {dropStates.some(function(e,i,a){ return e.isHovering; }) ?
             'Release to drop' :
-            'This dustbin accepts: ' + accepts.join(', ')
+            slotInfo
           }
+          <div className='dsheet-callsign'>{callsign}</div>
         </div>
       );
     }
   });
-  return RequirementBin;
+  return CategoryBin;
 }
-
-var ItemTypes = {
-  CAT: 'cat'
-};
 
 var dragSource = {
   beginDrag: function(component) {
     return {
-      item: {
-        name: component.props.name
-      }
+      item: component
     };
   },
 
@@ -94,48 +121,73 @@ function makeCourse(dropType) {
     },
 
     render: function() {
-      var name = this.props;
-      var hasDropped = this.state;
+      var name = this.props.name;
+      var hasDropped = this.state.hasDropped;
       var isDragging = this.getDragState(dropType);
       var opacity = isDragging ? 0.4 : 1;
 
-      return (
-        <div {...this.dragSourceFor(dropType)}
-             style={{opacity: opacity}}>
-          {hasDropped ?
-            <s>{name}</s> :
-            name
-          }
-        </div>
-      );
+      if (hasDropped) {
+        return <div className="dropped-class"></div>
+      } else {
+        return (
+          <div {...this.dragSourceFor(dropType)}
+               style={{opacity: opacity}}>
+            {name}
+          </div>
+        );
+      }
     }
   });
-
   return Course;
 }
 
+var ClassGroup = React.createClass({
+  render: function() {
+    return (
+      <div className='classgroup-div'>
+        <div>
+          {this.props.template.Inherits.map(
+            function(c, i){
+              return <ClassGroup template={c} />;
+            }
+          )}
+        </div>
+        <div>
+          {this.props.template.Classes.map(
+            function(c, i) {
+              var CategoryBin = makeCategoryBin(c);
+              return <CategoryBin />;
+            }
+          )}
+        </div>
+        <div>
+          {this.props.template.Categories.map(
+            function(c, i){
+              var CategoryBin = makeCategoryBin(c);
+              return <CategoryBin />
+            }
+          )}
+        </div>
+      </div>
+    )
+  }
+});
+
 var Sheets = React.createClass({
   mixins: [React.addons.LinkedStateMixin, Navigation],
-  renderReqBin: function(accepts) {
-    var ReqBin = makeReqBin(accepts);
-    return <ReqBin />;
-  },
 
-  renderCourse: function(name, dropType) {
-    var Course = makeCourse(dropType);
-    return <Course name={name} />;
+  getInitialState: function() {
+    return {
+      template: template = Sheet.get_template(30),
+    };
   },
 
   render: function() {
+    var Course = makeCourse('20');
     return (
       <div>
-        <div>
-          {this.renderReqBin([ItemTypes.CAT])}
-          loloololol
-        </div>
-        <div>
-          {this.renderCourse('cat', ItemTypes.CAT)}
-        </div>
+        <ClassGroup className="outer-classgroup" template={this.state.template}/>
+        <Course name='a course i guess OKAY'/>
       </div>
     );
   }
