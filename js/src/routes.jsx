@@ -9,7 +9,8 @@ var React = require('react'),
     ResetPassword = require('./pages/reset_password.js'),
     Login = require('./pages/login.js'),
     Register = require('./pages/register.js'),
-    ReviewForm = require('./components/review_form.js');
+    ReviewForm = require('./components/review_form.js'),
+    SheetManager = require('./pages/sheet_manager.js');
 
 module.exports = (
     <ReactRouter.Route handler={App}>
@@ -17,6 +18,7 @@ module.exports = (
         <ReactRouter.Route name="Login" path="/login" handler={Login} />
         <ReactRouter.Route name="Register" path="/register" handler={Register} />
         <ReactRouter.Route name="Reset Password" path="/reset/:user/:resetToken" handler={ResetPassword} />
+        <ReactRouter.Route name="Sheets" path="/sheet" handler={SheetManager} />
         <ReactRouter.NotFoundRoute handler={NotFound} />
 
     </ReactRouter.Route>
