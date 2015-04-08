@@ -30,7 +30,7 @@ var SheetManagerSheet = React.createClass({
 
     render: function(){
         return (
-            <mui.Paper onClick={this.handleClick}>
+            <mui.Paper className='sheet-manager-sheet' onClick={this.handleClick}>
                 <div>{this.props.sheet.Name}</div>
                 <div>{this.props.sheet.Template_Name}</div>
                 <div>{this.props.sheet.Created}</div>
