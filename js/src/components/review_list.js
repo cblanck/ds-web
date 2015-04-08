@@ -4,8 +4,26 @@ var React = require('react'),
     mui   = require('material-ui'),
     $     = require('jquery');
 
+var Review = React.createClass({
+
+    render: function() {
+        return(
+                <div className="review">
+                <mui.Paper zDepth={1}>
+                <div className="review-title">{this.props.Title}</div>
+                <div className="review-date">{this.props.Date}</div>
+                <div className="review-text">{this.props.Review}</div>
+                <div className="review-recommend">{this.props.Recommend.toString()}</div>
+                </mui.Paper>
+                </div>
+              );
+
+    },
+
+});
+
 var ReviewList = React.createClass({
-  //  mixins: [ReactRouter.State],
+    //  mixins: [ReactRouter.State],
 
     getReviewsForClass: function(classID) {
         var response = $.ajax({
@@ -47,4 +65,3 @@ var ReviewList = React.createClass({
 });
 
 module.exports = ReviewList;
-
