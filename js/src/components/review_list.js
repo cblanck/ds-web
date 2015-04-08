@@ -29,23 +29,20 @@ var ReviewList = React.createClass({
         console.log(reviews);
 
         return (
-            <div className="review-list-component">
+                <div className="review-list-component">
                 <h4>Review List</h4>
                 <ul>{reviews.map(function(review, i) {
-                        return (
-                            <div className="review-list-review">
-                                <mui.Paper zDepth={1}>
-                                    <div className="review-title">Title: {review.Title}</div>
-                                    <div className="review-date">Date: {review.Date}</div>
-                                    <div className="review-text">Review: {review.Review}</div>
-                                    <div className="review-recommend"> Recommend: {review.Recommend.toString()}</div>
-                                </mui.Paper>
-                            </div>
-                            );
-                     })}
+                    return (
+                            <Review Title={review.Title}
+                                    Date={review.Date}
+                                    Review={review.Review}
+                                    Recommend={review.Recommend}
+                            />
+                           );
+                })}
                 </ul>
-            </div>
-        );
+                </div>
+               );
     }
 });
 
