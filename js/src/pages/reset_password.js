@@ -6,7 +6,7 @@ var React = require('react'),
 var Session = require('../util/session.js');
 
 var ResetPassword = React.createClass({
-  mixins: [ReactRouter.State, React.addons.LinkedStateMixin],
+  mixins: [ReactRouter.State],
   getInitialState: function() {
     return {
       password: "",
@@ -15,7 +15,10 @@ var ResetPassword = React.createClass({
       errorText: "",
     };
   },
-  handleErrorInputChange: function(input, value) {
+  handleErrorInputChange: function(input, e, value) {
+    var nextState = this.state;
+    nextState[input] = value;
+    this.setState(nextState);
     if (this.state.password != this.state.password2) {
       this.setState({buttonDisabled: true,
                      errorText: "Passwords must match"});
@@ -44,12 +47,10 @@ var ResetPassword = React.createClass({
       <form id="reset-form" className="reset-password"
           onSubmit={this.handleSubmit}>
         <mui.TextField type="password"
-             valueLink={this.linkState('password')}
-             onChange={this.handleErrorInputChange}
+             onChange={this.handleErrorInputChange.bind(this, 'password')}
              hintText="Password"/>
         <mui.TextField type="password"
-             valueLink={this.linkState('password2')}
-             onChange={this.handleErrorInputChange}
+             onChange={this.handleErrorInputChange.bind(this, 'password2')}
              hintText="Repeat password"
              errorText={this.state.errorText}/>
         <mui.RaisedButton disabled={this.state.buttonDisabled}
