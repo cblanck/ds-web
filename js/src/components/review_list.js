@@ -13,8 +13,9 @@ var Review = React.createClass({
                 <div className="review-title">{this.props.Title}</div>
                 <div className="review-date">{this.props.Date}</div>
                 <div className="review-text">{this.props.Review}</div>
-                <div className="review-recommend">
+                <div className="review-recommend"> { /*
                     <FloatingActionButton iconClassName="muidocs-icon-action-grade" mini={true} disabled={!this.props.Recommend} />
+                */}
                 </div>
                 </mui.Paper>
                 </div>
@@ -38,7 +39,6 @@ var ReviewList = React.createClass({
             async: false
         }).responseText;
         var data = JSON.parse(response);
-        //TODO - add "if not successful" clause here.
         return data.Return;
     },
 
