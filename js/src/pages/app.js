@@ -38,6 +38,7 @@ var App = React.createClass({
               linkButton={true} href="/#/sheets"
               label = "Degree Sheets"/>
           </mui.ToolbarGroup>
+          <h1 className="degree-sheep-bar-logo">DegreeSheep </h1>
 
           <mui.ToolbarGroup key={1} float="right">
             {/*Register Button*/}
