@@ -42,7 +42,15 @@ var ReviewList = React.createClass({
 
     render: function() {
         var reviews = this.getReviewsForClass(this.props.classId);
-        //TODO - if no reviews, say so!
+
+        if (reviews.length == 0) {
+            return (
+                <div className="review-list-component">
+                <h4>No reviews yet! </h4>
+                </div>
+                   );
+        } else
+        {
 
         return (
                 <div className="review-list-component">
@@ -59,6 +67,7 @@ var ReviewList = React.createClass({
                 </ul>
                 </div>
                );
+        }
     }
 });
 
