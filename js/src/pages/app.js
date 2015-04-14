@@ -35,7 +35,7 @@ var App = React.createClass({
               label = "Home"/>
             {/*Sheets Button*/}
             <mui.FlatButton
-              linkButton={true} href="/#/sheets"
+              linkButton={true} href="/#/sheet"
               label = "Degree Sheets"/>
           </mui.ToolbarGroup>
 
