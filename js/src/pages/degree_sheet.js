@@ -288,19 +288,36 @@ var Sheets = React.createClass({
       template: template,
       entries: sheet.Entries,
       planned: planned,
-      classToAdd: '',
+      classToPlan: '',
+      classToTake: '',
     };
   },
-  handleChange: function(value) {
-    this.setState({classToAdd: value});
+  handlePlannedChange: function(value) {
+    this.setState({classToPlan: value});
   },
-  handleClick: function() {
+  handleTakenChange: function(value) {
+    this.setState({classToTake: value});
+  },
+  handlePlanClick: function() {
+    if (!this.state.classToPlan){
+      return;
+    }
     current_plan = this.state.planned;
-    current_plan.push({Class: this.state.classToAdd});
-    console.log(this.state.classToAdd);
+    current_plan.push({Class: this.state.classToPlan});
     this.setState({
       planned: current_plan,
-      classToAdd: '',
+      classToPlan: '',
+    });
+  },
+  handleTakeClick: function() {
+    if (!this.state.classToTake){
+      return;
+    }
+    current_entries = this.state.entries;
+    current_entries.push({Class: this.state.classToTake});
+    this.setState({
+      entries: current_entries,
+      classToTake: '',
     });
   },
   render: function() {
@@ -317,6 +334,11 @@ var Sheets = React.createClass({
               }
             )}
           </div>
+          <ClassInput
+            value={this.state.classToTake}
+            onChange={this.handleTakenChange}
+          />
+          <button onClick={this.handleTakeClick}>Add Class</button>
           <div className="planned-courses-div">
             Planned Courses
             {this.state.planned.map(
@@ -327,10 +349,10 @@ var Sheets = React.createClass({
             )}
           </div>
           <ClassInput
-            value={this.state.classToAdd}
-            onChange={this.handleChange}
+            value={this.state.classToPlan}
+            onChange={this.handlePlannedChange}
           />
-          <button onClick={this.handleClick}>Add Class</button>
+          <button onClick={this.handlePlanClick}>Plan Class</button>
         </div>
       </div>
     );
