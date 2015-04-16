@@ -57,7 +57,7 @@ function makeCategoryBin(category) {
     },
     handleCsClick: function() {
       if (!this.state.singleton) {
-        var win = window.open('/category/#/'+category.Id, '_blank');
+        var win = window.open('/#/category/'+category.Id, '_blank');
         win.focus();
       }
     },
@@ -172,6 +172,7 @@ var ClassGroup = React.createClass({
   render: function() {
     return (
       <div className={this.props.className ? this.props.className : 'classgroup-div'}>
+        <h5 className="classgroup-title">{this.props.template.Name}</h5>
         <div>
           {this.props.template.Inherits.map(
             function(c, i){
@@ -179,22 +180,18 @@ var ClassGroup = React.createClass({
             }
           )}
         </div>
-        <div>
-          {this.props.template.Classes.map(
-            function(c, i) {
-              var CategoryBin = makeCategoryBin(c);
-              return <CategoryBin />;
-            }
-          )}
-        </div>
-        <div>
-          {this.props.template.Categories.map(
-            function(c, i){
-              var CategoryBin = makeCategoryBin(c);
-              return <CategoryBin />
-            }
-          )}
-        </div>
+        {this.props.template.Classes.map(
+          function(c, i) {
+            var CategoryBin = makeCategoryBin(c);
+            return <CategoryBin />;
+          }
+        )}
+        {this.props.template.Categories.map(
+          function(c, i){
+            var CategoryBin = makeCategoryBin(c);
+            return <CategoryBin />
+          }
+        )}
       </div>
     )
   }
