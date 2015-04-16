@@ -51,15 +51,13 @@ function makeCategoryBin(category) {
     handleClick: function() {
       if (this.state.droppedCourse) {
         this.removeCourse()
-      } else {
-        this.refs.dialogWindow.show();
       }
     },
-    _onDialogSubmit: function() {
-      this.setState({
-        droppedCourse: this.refs.classRadio.getSelectedValue(),
-      });
-      this.refs.dialogWindow.dismiss();
+    handleCsClick: function() {
+      if (!this.state.singleton) {
+        var win = window.open('/category/#/'+category.Id, '_blank');
+        win.focus();
+      }
     },
     render: function() {
       if (!this.state.singleton) {
@@ -79,6 +77,8 @@ function makeCategoryBin(category) {
       if (this.state.singleton) {
         callsign = (' ('+category.Subject_callsign + " " +
                      category.Course_number+')');
+      } else {
+        callsign = '(Explore category)';
       }
       if (filled){
         slotInfo += " fulfilled";
@@ -94,10 +94,6 @@ function makeCategoryBin(category) {
       } else if (dropStates.some(function(e,i,a){ return e.isDragging; })) {
         backgroundColor = 'darkkhaki';
       }
-      var standardActions = [
-        { text: 'Cancel' },
-        { text: 'Submit', onClick: this._onDialogSubmit }
-      ];
       return (
         <div className="category-div" {...this.dropTargetFor.apply(this, courses)} onClick={this.handleClick}
           style={{backgroundColor: backgroundColor}}>
@@ -105,18 +101,7 @@ function makeCategoryBin(category) {
             'Release to drop' :
             slotInfo
           }
-          <div className='dsheet-callsign'>{callsign}</div>
-          <mui.Dialog ref="dialogWindow" actions={standardActions}>
-            <mui.RadioButtonGroup name="classes" ref="classRadio">
-              {this.state.classes.map(
-                function(course) {
-                  return <mui.RadioButton
-                            value={course.Id.toString()}
-                            label={course.Name}/>
-                }
-              )}
-            </mui.RadioButtonGroup>
-          </mui.Dialog>
+          <div onClick={this.handleCsClick} className='dsheet-callsign'>{callsign}</div>
         </div>
       );
     }
@@ -242,10 +227,21 @@ var Sheets = React.createClass({
     if (!template) {
       this.transitionTo("404");
     }
+    var planned = Api.call(
+      dsheet_api,
+      {
+        method: 'get_planned_courses',
+        session: Session.get_session().session,
+      }
+    );
+    if (!planned) {
+      this.transitionTo("404");
+    }
     return {
       sheet: sheet,
       template: template,
       entries: sheet.Entries,
+      planned: planned,
     };
   },
 
@@ -254,12 +250,27 @@ var Sheets = React.createClass({
       <div>
         <ClassGroup className="outer-classgroup" template={this.state.template}/>
         <div className="course-div">
-          {this.state.entries.map(
-            function(entry) {
-              var Course = makeCourse(entry);
-              return <Course className="sheet-course" name={entry.Class.Name}/>;
-            }
-          )}
+          <div className="taken-courses-div">
+            Taken Courses
+            {this.state.entries.map(
+              function(entry) {
+                var Course = makeCourse(entry);
+                return <Course className="sheet-course" name={entry.Class.Name}/>;
+              }
+            )}
+          </div>
+          <div className="planned-courses-div">
+            Planned Courses
+            {this.state.planned.map(
+              function(entry) {
+                var Course = makeCourse(entry);
+                return <Course className="sheet-course" name={entry.Class.Name}/>;
+              }
+            )}
+          </div>
+          <div className="class-adder-div">
+
+          </div>
         </div>
       </div>
     );
