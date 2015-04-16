@@ -32,7 +32,15 @@ var CategoryExplorerClass = React.createClass({
     render: function(){
         return (
             <mui.Paper className='category-explorer-class' onClick={this.handleClick}>
-                <div>{this.props.course.Name}</div>
+                <div className='category-explorer-class-name'>
+                    {this.props.course.Name}
+                </div>
+                <div className='category-explorer-class-short-desc'>
+                    {this.props.course.Description}
+                </div>
+                <div className='category-explorer-class-callsign'>
+                    ({this.props.course.Subject_callsign} {this.props.course.Course_number})
+                </div>
             </mui.Paper>
         );
     }
