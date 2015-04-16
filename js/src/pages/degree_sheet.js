@@ -2,7 +2,9 @@ var React = require('react'),
     mui   = require('material-ui'),
     dnd   = require('react-dnd'),
     ReactRouter = require('react-router'),
-    Navigation = ReactRouter.Navigation;
+    Navigation = ReactRouter.Navigation,
+    Promise = require('promise'),
+    Combobox = require('react-pick').Combobox;
 
 var Session = require('../util/session.js'),
     Api = require('../util/api.js');
@@ -198,6 +200,53 @@ var ClassGroup = React.createClass({
   }
 });
 
+var all_classes = Api.call(
+  '/api/class',
+  {
+    method: 'list',
+    session: Session.get_session().session,
+  }
+);
+
+
+var ClassInput = React.createClass({
+  getOptionsForInputValue: function(inputValue) {
+    return new Promise(function(resolve, reject) {
+      inputValue = inputValue.toLowerCase();
+      if (inputValue.length < 3) {
+        resolve([]);
+        return;
+      }
+      resolve(
+        all_classes.filter(
+          function(c) {
+            var callsigned = c.Subject_callsign+" "+c.Course_number;
+            return c.Name.toLowerCase().indexOf(inputValue) === 0 ||
+                   callsigned.toLowerCase().indexOf(inputValue) === 0;
+          }
+        )
+      );
+    });
+  },
+
+  getLabelForOption: function(value) {
+    if (!value.Name){
+      return  "";
+    }
+    return value.Name + " ("+value.Subject_callsign+" "+value.Course_number+")";
+  },
+
+  render: function() {
+    return (
+      <Combobox
+        {...this.props}
+        getOptionsForInputValue={this.getOptionsForInputValue}
+        getLabelForOption={this.getLabelForOption}
+      />
+    );
+  }
+});
+
 var Sheets = React.createClass({
   mixins: [React.addons.LinkedStateMixin, Navigation, ReactRouter.State],
 
@@ -242,9 +291,21 @@ var Sheets = React.createClass({
       template: template,
       entries: sheet.Entries,
       planned: planned,
+      classToAdd: '',
     };
   },
-
+  handleChange: function(value) {
+    this.setState({classToAdd: value});
+  },
+  handleClick: function() {
+    current_plan = this.state.planned;
+    current_plan.push({Class: this.state.classToAdd});
+    console.log(this.state.classToAdd);
+    this.setState({
+      planned: current_plan,
+      classToAdd: '',
+    });
+  },
   render: function() {
     return (
       <div>
@@ -268,9 +329,11 @@ var Sheets = React.createClass({
               }
             )}
           </div>
-          <div className="class-adder-div">
-
-          </div>
+          <ClassInput
+            value={this.state.classToAdd}
+            onChange={this.handleChange}
+          />
+          <button onClick={this.handleClick}>Add Class</button>
         </div>
       </div>
     );
