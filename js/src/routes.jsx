@@ -8,6 +8,7 @@ var React = require('react'),
     Home = require('./pages/home.js'),
     ResetPassword = require('./pages/reset_password.js'),
     Login = require('./pages/login.js'),
+    Class = require('./pages/class.js'),
     Register = require('./pages/register.js'),
     ReviewForm = require('./components/review_form.js'),
     SheetManager = require('./pages/sheet_manager.js');
@@ -19,7 +20,8 @@ module.exports = (
         <ReactRouter.Route name="Register" path="/register" handler={Register} />
         <ReactRouter.Route name="Reset Password" path="/reset/:user/:resetToken" handler={ResetPassword} />
         <ReactRouter.Route name="Sheets" path="/sheet" handler={SheetManager} />
-        <ReactRouter.NotFoundRoute handler={NotFound} />
+        <ReactRouter.Route name="Class" path="/class/:classId" handler={Class} />
+	<ReactRouter.NotFoundRoute handler={NotFound} />
 
     </ReactRouter.Route>
 );
