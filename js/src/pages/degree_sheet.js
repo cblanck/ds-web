@@ -52,7 +52,7 @@ function makeCategoryBin(category) {
     },
     handleClick: function() {
       if (this.state.droppedCourse) {
-        this.removeCourse()
+        this.removeCourse();
       }
     },
     handleCsClick: function() {
@@ -62,8 +62,9 @@ function makeCategoryBin(category) {
       }
     },
     render: function() {
+      var courses;
       if (!this.state.singleton) {
-        var courses = category.Classes.map(
+        courses = category.Classes.map(
           function(e) {
             return e.Id.toString();
           }
@@ -154,12 +155,13 @@ function makeCourse(entry) {
       var opacity = isDragging ? 0.4 : 1;
 
       if (hasDropped) {
-        return <div className="dropped-class"></div>
+        return <div className="dropped-class"></div>;
       } else {
         return (
           <div {...this.dragSourceFor(entry.Class.Id.toString())}
                style={{opacity: opacity}}>
             {name}
+            <span onClick={this.props.removeClick}>  <strong>x</strong></span>
           </div>
         );
       }
@@ -189,11 +191,11 @@ var ClassGroup = React.createClass({
         {this.props.template.Categories.map(
           function(c, i){
             var CategoryBin = makeCategoryBin(c);
-            return <CategoryBin />
+            return <CategoryBin />;
           }
         )}
       </div>
-    )
+    );
   }
 });
 
@@ -320,6 +322,21 @@ var Sheets = React.createClass({
       classToTake: '',
     });
   },
+  handleRemoveClass: function(entry, planned) {
+    var l;
+    if (planned) {
+      l = this.state.planned;
+    } else {
+      l = this.state.entries;
+    }
+    var index = l.indexOf(entry);
+    l.splice(index, 1);
+    if (planned) {
+      this.setState({planned: l});
+    } else {
+      this.setState({entries: l});
+    }
+  },
   render: function() {
     return (
       <div>
@@ -330,8 +347,13 @@ var Sheets = React.createClass({
             {this.state.entries.map(
               function(entry) {
                 var Course = makeCourse(entry);
-                return <Course className="sheet-course" name={entry.Class.Name}/>;
-              }
+                return (
+                  <Course className="sheet-course"
+                          removeClick={this.handleRemoveClass.bind(this, entry, false)}
+                          name={entry.Class.Name}/>
+                );
+              },
+              this
             )}
           </div>
           <ClassInput
@@ -344,8 +366,13 @@ var Sheets = React.createClass({
             {this.state.planned.map(
               function(entry) {
                 var Course = makeCourse(entry);
-                return <Course className="sheet-course" name={entry.Class.Name}/>;
-              }
+                return (
+                  <Course className="sheet-course"
+                          removeClick={this.handleRemoveClass.bind(this, entry, true)}
+                          name={entry.Class.Name}/>
+                );
+              },
+              this
             )}
           </div>
           <ClassInput
