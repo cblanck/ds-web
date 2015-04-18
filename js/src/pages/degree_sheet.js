@@ -14,13 +14,11 @@ var dsheet_api = '/api/degreesheet';
 var dropTarget = {
   acceptDrop: function(component, course) {
     component.removeCourse();
-    component.setState({
-      droppedCourse: course
-    });
+    component.addCourse(course);
   }
 };
 
-function makeCategoryBin(category) {
+function makeCategoryBin(category, master_template) {
   var CategoryBin = React.createClass({
     mixins: [dnd.DragDropMixin],
     getInitialState: function() {
@@ -43,12 +41,17 @@ function makeCategoryBin(category) {
         }
       }
     },
+    addCourse: function(course){
+        this.setState({droppedCourse: course});
+        master_template.drops[category.Id] = course.props.class_id;
+    },
     removeCourse: function(){
       if(!this.state.droppedCourse){
         return;
       }
       this.state.droppedCourse.setState({hasDropped: false});
       this.setState({droppedCourse: null});
+      master_template.drops[category.Id] = undefined;
     },
     handleClick: function() {
       if (this.state.droppedCourse) {
@@ -178,21 +181,21 @@ var ClassGroup = React.createClass({
         <div>
           {this.props.template.Inherits.map(
             function(c, i){
-              return <ClassGroup template={c} />;
-            }
+              return <ClassGroup template={c} master={this.props.master} />;
+            }.bind(this)
           )}
         </div>
         {this.props.template.Classes.map(
           function(c, i) {
-            var CategoryBin = makeCategoryBin(c);
+            var CategoryBin = makeCategoryBin(c, this.props.master);
             return <CategoryBin />;
-          }
+          }.bind(this)
         )}
         {this.props.template.Categories.map(
           function(c, i){
-            var CategoryBin = makeCategoryBin(c);
+            var CategoryBin = makeCategoryBin(c, this.props.master);
             return <CategoryBin />;
-          }
+          }.bind(this)
         )}
       </div>
     );
@@ -275,6 +278,7 @@ var Sheets = React.createClass({
     if (!template) {
       this.transitionTo("404");
     }
+    template.drops = {};
     var planned = Api.call(
       dsheet_api,
       {
@@ -322,6 +326,11 @@ var Sheets = React.createClass({
       classToTake: '',
     });
   },
+  saveSheetState: function(){
+    // Collate the requirement_id:course_id mappings
+    // Post it to the backend
+    console.log(this.state);
+  },
   handleRemoveClass: function(entry, planned) {
     var l;
     if (planned) {
@@ -340,7 +349,7 @@ var Sheets = React.createClass({
   render: function() {
     return (
       <div>
-        <ClassGroup className="outer-classgroup" template={this.state.template}/>
+        <ClassGroup className="outer-classgroup" template={this.state.template} master={this.state.template}/>
         <div className="course-div">
           <div className="taken-courses-div">
             Taken Courses
@@ -350,6 +359,7 @@ var Sheets = React.createClass({
                 return (
                   <Course className="sheet-course"
                           removeClick={this.handleRemoveClass.bind(this, entry, false)}
+                          class_id={entry.Class.Id}
                           name={entry.Class.Name}/>
                 );
               },
@@ -369,6 +379,7 @@ var Sheets = React.createClass({
                 return (
                   <Course className="sheet-course"
                           removeClick={this.handleRemoveClass.bind(this, entry, true)}
+                          class_id={entry.Class.Id}
                           name={entry.Class.Name}/>
                 );
               },
@@ -379,7 +390,8 @@ var Sheets = React.createClass({
             value={this.state.classToPlan}
             onChange={this.handlePlannedChange}
           />
-          <button onClick={this.handlePlanClick}>Plan Class</button>
+          <mui.RaisedButton onClick={this.handlePlanClick}>Plan Class</mui.RaisedButton>
+          <mui.RaisedButton primary={true} onClick={this.saveSheetState}>Save Sheet</mui.RaisedButton>
         </div>
       </div>
     );
