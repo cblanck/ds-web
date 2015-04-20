@@ -279,21 +279,11 @@ var Sheets = React.createClass({
       this.transitionTo("404");
     }
     template.drops = {};
-    var planned = Api.call(
-      dsheet_api,
-      {
-        method: 'get_planned_courses',
-        session: Session.get_session().session,
-      }
-    );
-    if (!planned) {
-      this.transitionTo("404");
-    }
     return {
       sheet: sheet,
       template: template,
-      entries: sheet.Entries,
-      planned: planned,
+      entries: sheet.Taken_courses,
+      planned: sheet.Planned_courses,
       classToPlan: '',
       classToTake: '',
     };
