@@ -340,7 +340,7 @@ var Sheets = React.createClass({
               this
             )}
           </div>
-          <mui.RaisedButton primary={true} onClick={this.saveSheetState}>Save Sheet</mui.RaisedButton>
+          <mui.RaisedButton primary={true} onClick={this.saveSheetState} label="Save Sheet" />
         </div>
       </div>
     );
