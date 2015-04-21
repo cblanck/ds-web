@@ -319,7 +319,16 @@ var Sheets = React.createClass({
   saveSheetState: function(){
     // Collate the requirement_id:course_id mappings
     // Post it to the backend
-    console.log(this.state);
+    result = Api.call(
+      '/api/degreesheet',
+      {
+        method: 'set_satisfaction_mapping',
+        session: Session.get_session().session,
+        sheet_id: this.state.sheet.Id,
+        satisfaction_map : JSON.stringify(this.state.template.drops),
+      }
+    );
+    console.log(result);
   },
   handleRemoveClass: function(entry, planned) {
     var l;
