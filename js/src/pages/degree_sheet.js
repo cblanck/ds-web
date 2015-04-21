@@ -62,6 +62,9 @@ function makeCategoryBin(category, master_template) {
       if (!this.state.singleton) {
         var win = window.open('/#/category/'+category.Id, '_blank');
         win.focus();
+      } else {
+        var win = window.open('/#/class/'+category.Id, '_blank');
+        win.focus();
       }
     },
     render: function() {
