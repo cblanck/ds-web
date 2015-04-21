@@ -41,18 +41,21 @@ module.exports = React.createClass({
           };
         });
     return (
-      <div className="submit-review-div">
+      <mui.Paper className="submit-review-div">
         <strong>Submit a review</strong>
         <form id="submit-review-form" className="submit-review-form" onSubmit={this.handleSubmit}>
+        Which instructor did you have?
           <mui.DropDownMenu
             menuItems={menuItems}
             onChange={this.dropDownChange}/><br/>
           <mui.TextField
             valueLink={this.linkState('title')}
-            hintText="Review Title"/><br/>
+            hintText="Review Title"
+            className="review-input-title"
+            /><br/>
           <mui.TextField
             valueLink={this.linkState('review')}
-            hintText="Review" multiLine={true} /><br/>
+            hintText="Review" className="review-input-body" multiLine={true} /><br/>
           <mui.Checkbox
             name="recommend"
             label="Recommend this class?"
@@ -62,7 +65,7 @@ module.exports = React.createClass({
             primary={true} label="submit"/>
         </form>
         {this.state.errorMessage && <p>{this.state.errorMessage}</p>}
-      </div>
+      </mui.Paper>
     );
   },
 });
