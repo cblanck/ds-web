@@ -18,11 +18,16 @@ var dropTarget = {
   }
 };
 
-function makeCategoryBin(category, master_template) {
+function makeCategoryBin(category, predropped, master_template) {
   var CategoryBin = React.createClass({
     mixins: [dnd.DragDropMixin],
     getInitialState: function() {
+      var dropped = null;
+      if (predropped[category.Id.toString()]) {
+        dropped = predropped[category.Id.toString()];
+      }
       return {
+        predropped: dropped,
         droppedCourse: null,
         singleton: category.Classes ? false : true,
         classes: category.Classes ? category.Classes : [category],
@@ -39,6 +44,11 @@ function makeCategoryBin(category, master_template) {
         } else {
           register(category.Id.toString(), {dropTarget: dropTarget});
         }
+      }
+    },
+    componentDidMount: function() {
+      if(this.isMounted() && this.state.predropped){
+        this.props.preDrop(this, this.state.predropped.toString());
       }
     },
     addCourse: function(course){
@@ -184,20 +194,27 @@ var ClassGroup = React.createClass({
         <div>
           {this.props.template.Inherits.map(
             function(c, i){
-              return <ClassGroup template={c} master={this.props.master} />;
+              return <ClassGroup template={c}
+                                 predropped={this.props.predropped}
+                                 preDrop={this.props.preDrop}
+                                 master={this.props.master} />;
             }.bind(this)
           )}
         </div>
         {this.props.template.Classes.map(
           function(c, i) {
-            var CategoryBin = makeCategoryBin(c, this.props.master);
-            return <CategoryBin />;
+            var CategoryBin = makeCategoryBin(c,
+                                              this.props.predropped,
+                                              this.props.master);
+            return <CategoryBin preDrop={this.props.preDrop}/>;
           }.bind(this)
         )}
         {this.props.template.Categories.map(
           function(c, i){
-            var CategoryBin = makeCategoryBin(c, this.props.master);
-            return <CategoryBin />;
+            var CategoryBin = makeCategoryBin(c,
+                                              this.props.predropped,
+                                              this.props.master);
+            return <CategoryBin preDrop={this.props.preDrop}/>;
           }.bind(this)
         )}
       </div>
@@ -212,7 +229,6 @@ var all_classes = Api.call(
     session: Session.get_session().session,
   }
 );
-
 
 var ClassInput = React.createClass({
   getOptionsForInputValue: function(inputValue) {
@@ -252,6 +268,9 @@ var ClassInput = React.createClass({
   }
 });
 
+var mapping = {};
+var loaded = false;
+
 var Sheets = React.createClass({
   mixins: [React.addons.LinkedStateMixin, Navigation, ReactRouter.State],
 
@@ -287,6 +306,7 @@ var Sheets = React.createClass({
       template: template,
       entries: sheet.Taken_courses,
       planned: sheet.Planned_courses,
+      predropped: sheet.Dropped_courses,
       classToPlan: '',
       classToTake: '',
     };
@@ -331,7 +351,16 @@ var Sheets = React.createClass({
         satisfaction_map : JSON.stringify(this.state.template.drops),
       }
     );
-    console.log(result);
+  },
+  componentDidMount: function(){
+    if (loaded) {
+      return;
+    }
+    for (course_id in mapping) {
+      mapping[course_id].addCourse(this.refs[course_id]);
+      this.refs[course_id].setState({hasDropped: true});
+    }
+    loaded = true;
   },
   handleRemoveClass: function(entry, planned) {
     var l;
@@ -348,10 +377,20 @@ var Sheets = React.createClass({
       this.setState({entries: l});
     }
   },
+  preDrop: function(component, course_id) {
+    if (loaded) {
+      return;
+    }
+    mapping[course_id] = component;
+  },
   render: function() {
     return (
       <div>
-        <ClassGroup className="outer-classgroup" template={this.state.template} master={this.state.template}/>
+        <ClassGroup className="outer-classgroup"
+                    predropped={this.state.predropped}
+                    preDrop={this.preDrop}
+                    template={this.state.template}
+                    master={this.state.template}/>
         <div className="course-div">
           <div className="taken-courses-div">
             Taken Courses
@@ -362,6 +401,8 @@ var Sheets = React.createClass({
                   <Course className="sheet-course"
                           removeClick={this.handleRemoveClass.bind(this, entry, false)}
                           class_id={entry.Class.Id}
+                          key={entry.Class.Id}
+                          ref={entry.Class.Id}
                           name={entry.Class.Name}/>
                 );
               },
@@ -382,6 +423,8 @@ var Sheets = React.createClass({
                   <Course className="sheet-course"
                           removeClick={this.handleRemoveClass.bind(this, entry, true)}
                           class_id={entry.Class.Id}
+                          key={entry.Class.Id}
+                          ref={entry.Class.Id}
                           name={entry.Class.Name}/>
                 );
               },
