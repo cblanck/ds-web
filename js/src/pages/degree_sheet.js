@@ -163,7 +163,10 @@ function makeCourse(entry) {
         register(entry.Class.Id.toString(), { dragSource: dragSource });
       }
     },
-
+    gotoClassPage: function(){
+        var win = window.open('/#/class/'+entry.Class.Id, '_blank');
+        win.focus();
+    },
     render: function() {
       var name = this.props.name;
       var hasDropped = this.state.hasDropped;
@@ -174,7 +177,7 @@ function makeCourse(entry) {
         return <div className="dropped-class"></div>;
       } else {
         return (
-          <div {...this.dragSourceFor(entry.Class.Id.toString())}
+          <div onClick={this.gotoClassPage} {...this.dragSourceFor(entry.Class.Id.toString())}
                style={{opacity: opacity}}>
             {name}
           </div>
