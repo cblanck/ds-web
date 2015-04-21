@@ -121,7 +121,7 @@ function makeCategoryBin(category, predropped, master_template) {
             slotInfo
           }
           <div onClick={this.handleCsClick} className='dsheet-callsign'>{callsign}</div>
-        </div>
+         </div>
       );
     }
   });
@@ -435,8 +435,8 @@ var Sheets = React.createClass({
             value={this.state.classToPlan}
             onChange={this.handlePlannedChange}
           />
-          <mui.RaisedButton onClick={this.handlePlanClick}>Plan Class</mui.RaisedButton>
-          <mui.RaisedButton primary={true} onClick={this.saveSheetState}>Save Sheet</mui.RaisedButton>
+          <mui.RaisedButton onClick={this.handlePlanClick} label="Plan Class" />
+          <mui.RaisedButton primary={true} onClick={this.saveSheetState} label="Save Sheet"/>
         </div>
       </div>
     );
