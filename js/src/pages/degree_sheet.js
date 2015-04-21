@@ -121,7 +121,7 @@ function makeCategoryBin(category, predropped, master_template) {
             slotInfo
           }
           <div onClick={this.handleCsClick} className='dsheet-callsign'>{callsign}</div>
-         </div>
+        </div>
       );
     }
   });
@@ -177,7 +177,6 @@ function makeCourse(entry) {
           <div {...this.dragSourceFor(entry.Class.Id.toString())}
                style={{opacity: opacity}}>
             {name}
-            <span onClick={this.props.removeClick}>  <strong>x</strong></span>
           </div>
         );
       }
@@ -230,44 +229,6 @@ var all_classes = Api.call(
   }
 );
 
-var ClassInput = React.createClass({
-  getOptionsForInputValue: function(inputValue) {
-    return new Promise(function(resolve, reject) {
-      inputValue = inputValue.toLowerCase();
-      if (inputValue.length < 3) {
-        resolve([]);
-        return;
-      }
-      resolve(
-        all_classes.filter(
-          function(c) {
-            var callsigned = c.Subject_callsign+" "+c.Course_number;
-            return c.Name.toLowerCase().indexOf(inputValue) === 0 ||
-                   callsigned.toLowerCase().indexOf(inputValue) === 0;
-          }
-        )
-      );
-    });
-  },
-
-  getLabelForOption: function(value) {
-    if (!value.Name){
-      return  "";
-    }
-    return value.Name + " ("+value.Subject_callsign+" "+value.Course_number+")";
-  },
-
-  render: function() {
-    return (
-      <Combobox
-        {...this.props}
-        getOptionsForInputValue={this.getOptionsForInputValue}
-        getLabelForOption={this.getLabelForOption}
-      />
-    );
-  }
-});
-
 var mapping = {};
 var loaded = false;
 
@@ -307,37 +268,7 @@ var Sheets = React.createClass({
       entries: sheet.Taken_courses,
       planned: sheet.Planned_courses,
       predropped: sheet.Dropped_courses,
-      classToPlan: '',
-      classToTake: '',
     };
-  },
-  handlePlannedChange: function(value) {
-    this.setState({classToPlan: value});
-  },
-  handleTakenChange: function(value) {
-    this.setState({classToTake: value});
-  },
-  handlePlanClick: function() {
-    if (!this.state.classToPlan){
-      return;
-    }
-    current_plan = this.state.planned;
-    current_plan.push({Class: this.state.classToPlan});
-    this.setState({
-      planned: current_plan,
-      classToPlan: '',
-    });
-  },
-  handleTakeClick: function() {
-    if (!this.state.classToTake){
-      return;
-    }
-    current_entries = this.state.entries;
-    current_entries.push({Class: this.state.classToTake});
-    this.setState({
-      entries: current_entries,
-      classToTake: '',
-    });
   },
   saveSheetState: function(){
     // Collate the requirement_id:course_id mappings
@@ -362,21 +293,6 @@ var Sheets = React.createClass({
     }
     loaded = true;
   },
-  handleRemoveClass: function(entry, planned) {
-    var l;
-    if (planned) {
-      l = this.state.planned;
-    } else {
-      l = this.state.entries;
-    }
-    var index = l.indexOf(entry);
-    l.splice(index, 1);
-    if (planned) {
-      this.setState({planned: l});
-    } else {
-      this.setState({entries: l});
-    }
-  },
   preDrop: function(component, course_id) {
     if (loaded) {
       return;
@@ -399,7 +315,6 @@ var Sheets = React.createClass({
                 var Course = makeCourse(entry);
                 return (
                   <Course className="sheet-course"
-                          removeClick={this.handleRemoveClass.bind(this, entry, false)}
                           class_id={entry.Class.Id}
                           key={entry.Class.Id}
                           ref={entry.Class.Id}
@@ -409,11 +324,6 @@ var Sheets = React.createClass({
               this
             )}
           </div>
-          <ClassInput
-            value={this.state.classToTake}
-            onChange={this.handleTakenChange}
-          />
-          <button onClick={this.handleTakeClick}>Add Class</button>
           <div className="planned-courses-div">
             Planned Courses
             {this.state.planned.map(
@@ -421,7 +331,6 @@ var Sheets = React.createClass({
                 var Course = makeCourse(entry);
                 return (
                   <Course className="sheet-course"
-                          removeClick={this.handleRemoveClass.bind(this, entry, true)}
                           class_id={entry.Class.Id}
                           key={entry.Class.Id}
                           ref={entry.Class.Id}
@@ -431,12 +340,7 @@ var Sheets = React.createClass({
               this
             )}
           </div>
-          <ClassInput
-            value={this.state.classToPlan}
-            onChange={this.handlePlannedChange}
-          />
-          <mui.RaisedButton onClick={this.handlePlanClick} label="Plan Class" />
-          <mui.RaisedButton primary={true} onClick={this.saveSheetState} label="Save Sheet"/>
+          <mui.RaisedButton primary={true} onClick={this.saveSheetState}>Save Sheet</mui.RaisedButton>
         </div>
       </div>
     );
