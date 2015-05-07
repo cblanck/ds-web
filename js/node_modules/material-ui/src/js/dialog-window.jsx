@@ -40,6 +40,10 @@ var DialogWindow = React.createClass({
 
   componentDidMount: function() {
     this._positionDialog();
+    if (this.props.openImmediately) {
+      this.refs.dialogOverlay.preventScrolling();
+      this._onShow();
+    }
   },
 
   componentDidUpdate: function (prevProps, prevState) {
@@ -63,7 +67,7 @@ var DialogWindow = React.createClass({
           {this.props.children}
           {actions}
         </Paper>
-        <Overlay show={this.state.open} onTouchTap={this._handleOverlayTouchTap} />
+        <Overlay ref="dialogOverlay" show={this.state.open} autoLockScrolling={false} onTouchTap={this._handleOverlayTouchTap} />
       </div>
     );
   },
@@ -73,26 +77,19 @@ var DialogWindow = React.createClass({
   },
 
   dismiss: function() {
-
     CssEvent.onTransitionEnd(this.getDOMNode(), function() {
-      //allow scrolling
-      var body = document.getElementsByTagName('body')[0];
-      body.style.overflow = '';
-      body.style.position = '';
-    });
+      this.refs.dialogOverlay.allowScrolling();
+    }.bind(this));
 
     this.setState({ open: false });
-    if (this.props.onDismiss) this.props.onDismiss();
+    this._onDismiss();
   },
 
   show: function() {
-    //prevent scrolling
-    var body = document.getElementsByTagName('body')[0];
-    body.style.overflow = 'hidden';
-    body.style.position = 'fixed';
+    this.refs.dialogOverlay.preventScrolling();
 
     this.setState({ open: true });
-    if (this.props.onShow) this.props.onShow();
+    this._onShow();
   },
 
   _addClassName: function(reactObject, className) {
@@ -159,9 +156,15 @@ var DialogWindow = React.createClass({
         container.style.paddingTop = 
           ((containerHeight - dialogWindowHeight) / 2) - 64 + 'px';
       }
-      
-
     }
+  },
+  
+  _onShow: function() {
+    if (this.props.onShow) this.props.onShow();
+  },
+  
+  _onDismiss: function() {
+    if (this.props.onDismiss) this.props.onDismiss();
   },
 
   _handleOverlayTouchTap: function() {
